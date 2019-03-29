@@ -14,17 +14,48 @@ npm install --save semantic-ui-react-formik
 
 ```jsx
 import React, { Component } from 'react'
+import { Wizard } from "semantic-ui-react-formik";
+import FirstPage from "./FirstPage";
+import SecondPage from "./SecondPage";
 
-import MyComponent from 'semantic-ui-react-formik'
+const MyForm = ({ onSubmit }) => (
+  <Wizard
+    initialValues={{
+      firstName: "",
+      lastName: "",
+      email: "",
+      favoriteColor: "",
+      choice: ""
+    }}
+    onSubmit={onSubmit}
+  >
+    <Wizard.Page>
+      <FirstPage />
+    </Wizard.Page>
+    <Wizard.Page>
+      <SecondPage />
+    </Wizard.Page>
+  </Wizard>
+);
 
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
+export default MyForm;
 ```
+
+## Example
+
+Screenshot from included example:
+
+  * Wizard page 1
+  
+<img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page1.png"/>
+
+  * Wizard page 1 with input errors
+  
+<img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page1-errors.png"/>
+
+  * Wizard page 2
+  
+<img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page2.png"/>
 
 ## License
 

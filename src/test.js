@@ -1,7 +1,7 @@
-import ExampleComponent from './'
+import Wizard from './'
 
-describe('ExampleComponent', () => {
+describe('Wizard', () => {
   it('is truthy', () => {
-    expect(ExampleComponent).toBeTruthy()
+    expect(Wizard).toBeTruthy()
   })
 })

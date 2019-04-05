@@ -142,6 +142,7 @@ export default class Wizard extends React.Component {
 
     render() {
         const {
+            buttonLabels,
             errorsHeader, disableSubmitOnError,
             children, debug
         } = this.props;
@@ -155,6 +156,18 @@ export default class Wizard extends React.Component {
         const { page, values } = this.state;
         const activePage = React.Children.toArray(children)[page];
         const isLastPage = page === React.Children.count(children) - 1;
+        let submitLabel = 'Submit';
+        let nextLabel = 'Next';
+        let previousLabel = 'Previous';
+        if (buttonLabels !== undefined && buttonLabels.submit !== undefined) {
+            submitLabel = buttonLabels.submit;
+        }
+        if (buttonLabels !== undefined && buttonLabels.next !== undefined) {
+            nextLabel = buttonLabels.next;
+        }
+        if (buttonLabels !== undefined && buttonLabels.previous !== undefined) {
+            previousLabel = buttonLabels.previous;
+        }
         const showSubmit = activePage.props.showSubmit === undefined || activePage.props.showSubmit;
         const showPrevious = activePage.props.showPrevious === undefined || activePage.props.showPrevious;
         return (
@@ -184,19 +197,19 @@ export default class Wizard extends React.Component {
                             <Form.Group className='wizard-buttons' style={{ display: 'block', overflow: 'hidden'}}>
                                 {showSubmit && isLastPage && (
                                     <Button type='submit' floated='right' primary disabled={disableSubmit}>
-                                        Submit
+                                        {submitLabel}
                                     </Button>
                                 )}
 
                                 {showSubmit && !isLastPage && (
                                     <Button floated='right' onClick={(e) => this.next(e, props)} primary disabled={disableNext}>
-                                        Next
+                                        {nextLabel}
                                     </Button>
                                 )}
 
                                 {showPrevious && page > 0 && (
                                     <Button floated='right' onClick={(e) => this.previous(e, props)}>
-                                        Previous
+                                        {previousLabel}
                                     </Button>
                                 )}
                             </Form.Group>

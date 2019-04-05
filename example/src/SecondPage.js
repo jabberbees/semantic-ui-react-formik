@@ -1,5 +1,6 @@
 import React from "react";
 import { Form } from 'semantic-ui-react';
+import { FormField } from "semantic-ui-react-ext";
 import { Wizard } from "semantic-ui-react-formik";
 import { required } from './utils';
 
@@ -7,7 +8,7 @@ const Page = (props) => (
   <React.Fragment>
     <Wizard.Field
       name="email"
-      component={Form.Input}
+      component={FormField}
       componentProps={{
         label: 'Email',
         autoFocus: true

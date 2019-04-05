@@ -16,6 +16,11 @@ const MyForm = ({ onPageChanged }) => (
         favoriteColor: "",
         choice: ""
       }}
+      buttonLabels={{
+        previous: "PREVIOUS",
+        next: "NEXT",
+        submit: "SUBMIT"
+      }}
       errorsHeader='Please check the following errors:'
       onPageChanged={onPageChanged}
       onSubmit={(values, actions) => {

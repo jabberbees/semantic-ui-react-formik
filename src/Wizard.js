@@ -59,10 +59,9 @@ export default class Wizard extends React.Component {
                 componentProps.error = isSemanticUiReactFormControl(component)
                     ? !!error
                     : error;
-                const valueProps =
-                    typeof value === "boolean"
-                        ? { checked: value }
-                        : { value: value || "" };
+                const valueProps = (typeof value === "boolean")
+                    ? { checked: value }
+                    : { value: value || "" };
                 return React.createElement(component, {
                     ...componentProps,
                     ...field,
@@ -121,9 +120,14 @@ export default class Wizard extends React.Component {
         });
     }
 
-    previous = () => this.setState(state => ({
-        page: Math.max(state.page - 1, 0)
-    }));
+    previous = (e, { setErrors }) => {
+        e.preventDefault();
+        this.setState(state => ({
+            page: Math.max(state.page - 1, 0)
+        }), () => {
+            setErrors([]);
+        });
+    }
 
     validate = (values) => {
         const activePage = React.Children.toArray(this.props.children)[this.state.page];
@@ -137,16 +141,28 @@ export default class Wizard extends React.Component {
     };
 
     render() {
-        const { errorsHeader, disableSubmitOnError, children, debug } = this.props;
+        const {
+            errorsHeader, disableSubmitOnError,
+            children, debug
+        } = this.props;
+        let { validateOnChange, validateOnBlur } = this.props;
+        if (validateOnChange === undefined) {
+            validateOnChange = true;
+        }
+        if (validateOnBlur === undefined) {
+            validateOnBlur = false;
+        }
         const { page, values } = this.state;
         const activePage = React.Children.toArray(children)[page];
         const isLastPage = page === React.Children.count(children) - 1;
+        const showSubmit = activePage.props.showSubmit === undefined || activePage.props.showSubmit;
+        const showPrevious = activePage.props.showPrevious === undefined || activePage.props.showPrevious;
         return (
             <Formik
                 initialValues={values}
                 enableReinitialize={false}
-                validateOnChange={true}
-                validateOnBlur={true}
+                validateOnChange={validateOnChange}
+                validateOnBlur={validateOnBlur}
                 validate={this.validate}
                 onSubmit={this.handleSubmit}
                 render={props => {
@@ -157,23 +173,29 @@ export default class Wizard extends React.Component {
                     return (
                         <Form onSubmit={props.handleSubmit}>
 
-                            {React.cloneElement(activePage, { parentState: { ...props } })}
+                            {React.cloneElement(activePage, {
+                                parentState: {
+                                    ...props,
+                                    previous: (e) => this.previous(e, props),
+                                    next: (e) => this.next(e, props)
+                                }
+                            })}
 
                             <Form.Group className='wizard-buttons' style={{ display: 'block', overflow: 'hidden'}}>
-                                {isLastPage && (
+                                {showSubmit && isLastPage && (
                                     <Button type='submit' floated='right' primary disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 )}
 
-                                {!isLastPage && (
+                                {showSubmit && !isLastPage && (
                                     <Button floated='right' onClick={(e) => this.next(e, props)} primary disabled={disableNext}>
                                         Next
                                     </Button>
                                 )}
 
-                                {page > 0 && (
-                                    <Button floated='right' onClick={this.previous}>
+                                {showPrevious && page > 0 && (
+                                    <Button floated='right' onClick={(e) => this.previous(e, props)}>
                                         Previous
                                     </Button>
                                 )}

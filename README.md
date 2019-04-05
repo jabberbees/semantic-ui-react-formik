@@ -49,13 +49,17 @@ Screenshot from included example:
   
 <img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page1.png"/>
 
-  * Wizard page 1 with input errors
-  
-<img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page1-errors.png"/>
-
   * Wizard page 2
   
 <img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page2.png"/>
+
+  * Wizard page 2 with input errors
+  
+<img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page2-errors.png"/>
+
+  * Wizard page 3
+  
+<img src="https://raw.githubusercontent.com/jabberbees/semantic-ui-react-formik/master/doc/wizard-page3.png"/>
 
 ## License
 

@@ -13,7 +13,7 @@ export default class App extends Component {
     return (
       <React.Fragment>
         <Header as="h1" style={{textAlign: 'center'}}>
-          Semantic UI React Formik {this.state.page} / 2
+          Semantic UI React Formik {this.state.page} / 3
         </Header>
         <Container style={{ paddingTop: 0 }}>
           <Segment attached>

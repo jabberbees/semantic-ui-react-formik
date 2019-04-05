@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, Button, Icon } from 'semantic-ui-react';
 import { FormField } from "semantic-ui-react-ext";
 import { Wizard } from "semantic-ui-react-formik";
 import { required } from './utils';
@@ -59,6 +59,10 @@ const Page = (props) => (
       }}
       validate={required}
     />
+    <Button icon labelPosition='left' onClick={props.previous}>
+      <Icon name='undo' />
+      Undo 
+    </Button>
   </React.Fragment>
 );
 

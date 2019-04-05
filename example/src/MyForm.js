@@ -1,5 +1,6 @@
 import React from "react";
 import { Wizard } from "semantic-ui-react-formik";
+import SelectionPage from "./SelectionPage";
 import FirstPage from "./FirstPage";
 import SecondPage from "./SecondPage";
 
@@ -25,7 +26,11 @@ const MyForm = ({ onPageChanged }) => (
       }}
       debug={false}
     >
+      <Wizard.Page showSubmit={false}>
+        <SelectionPage />
+      </Wizard.Page>
       <Wizard.Page
+        showPrevious={false}
         validate={values => {
           const errors = {};
           if (values.firstName === values.lastName) {

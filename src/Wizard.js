@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik, Field, getIn } from "formik";
-import { Form, Button, Message } from 'semantic-ui-react';
+import { Form, Radio, Button, Message } from 'semantic-ui-react';
 
 function getFormikFieldError(form, fieldName) {
     const { serverValidation } = form.status || {};
@@ -39,6 +39,12 @@ function isSemanticUiReactFormControl(component) {
         ;
 }
 
+function isSemanticUiReactFormRadio(component) {
+    return (component === Radio)
+        || (component === Form.Radio)
+        ;
+}
+
 export default class Wizard extends React.Component {
     static Page = ({ children, parentState }) => {
         return React.cloneElement(children, parentState);
@@ -47,31 +53,46 @@ export default class Wizard extends React.Component {
     static Field = ({ component, componentProps = {}, ...fieldProps }) => (
         <Field
             {...fieldProps}
-            render={props => {
+            render={renderProps => {
                 var { id } = componentProps;
-                var { field, form } = props;
+                var { field, form } = renderProps;
                 var { name, value } = field;
+
                 if (!id) {
                     id = "wizard_field_" + name;
                 }
+
                 const error = getFormikFieldError(form, name);
-                componentProps.id = id;
-                componentProps.error = isSemanticUiReactFormControl(component)
-                    ? !!error
-                    : error;
-                const valueProps = (typeof value === "boolean")
-                    ? { checked: value }
-                    : { value: value || "" };
-                return React.createElement(component, {
+                
+                let props = {
                     ...componentProps,
                     ...field,
-                    ...props,
-                    ...valueProps,
-                    onChange: (e, { name, value }) => {
+                    ...renderProps,
+                    id
+                };
+
+                if (isSemanticUiReactFormControl(component)) {
+                    props.error = !!error;
+                }
+                else {
+                    props.error = error;
+                }
+
+                if (isSemanticUiReactFormRadio(component)) {
+                    props.value = componentProps.value;
+                    props.checked = value === componentProps.value;
+                    props.onChange = field.onChange;
+                    props.onBlur = field.onBlur;
+                }
+                else {
+                    props.value = value || "";
+                    props.onChange = (e, { name, value }) => {
                         setFormikFieldValue(form, name, value, true);
-                    },
-                    onBlur: form.handleBlur
-                });
+                    }
+                    props.onBlur = form.handleBlur;
+                }
+
+                return React.createElement(component, props);
             }}
         />
     );

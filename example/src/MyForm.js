@@ -10,11 +10,13 @@ const MyForm = ({ onPageChanged }) => (
   <div className="App">
     <Wizard
       initialValues={{
-        firstName: "",
-        lastName: "",
+        applicant: {
+          firstName: "",
+          lastName: "",
+          choice: ""
+        },
         email: "",
         favoriteColor: "",
-        choice: ""
       }}
       buttonLabels={{
         previous: "PREVIOUS",
@@ -38,9 +40,11 @@ const MyForm = ({ onPageChanged }) => (
         showPrevious={false}
         validate={values => {
           const errors = {};
-          if (values.firstName === values.lastName) {
-            errors.firstName = "Must be different than last name";
-            errors.lastName = "Must be different than first name";
+          if (values.applicant && values.applicant.firstName === values.applicant.lastName) {
+            errors.applicant = {
+              firstName: "Must be different than last name",
+              lastName: "Must be different than first name"
+            };
           }
           return errors;
         }}

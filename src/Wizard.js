@@ -2,6 +2,10 @@ import React from "react";
 import { Formik, Field, getIn } from "formik";
 import { Form, Radio, Button, Message } from 'semantic-ui-react';
 
+function isObject(obj) {
+    return obj !== null && typeof obj === 'object';
+}
+
 function getFormikFieldError(form, fieldName) {
     const { serverValidation } = form.status || {};
     const touched = getIn(form.touched, fieldName);
@@ -15,17 +19,54 @@ function setFormikFieldValue(form, name, value, shouldValidate) {
     form.setFieldTouched(name, true, shouldValidate);
 };
 
+function appendObjectErrors(object, parentField, form, result) {
+    for (const key of Object.keys(object)) {
+        const val = object[key];
+        
+        const fieldName = parentField
+        ? (Array.isArray(object) ? parentField + '[' + key + ']' : parentField + '.' + key)
+        : key;
+        
+        if (isObject(val)) {
+            appendObjectErrors(val, fieldName, form, result);
+        }
+        else {
+            const error = getFormikFieldError(form, fieldName);
+            if (error) {
+                result.push(error);
+            }
+        }
+    }
+}
+
 function getFormikErrors(form) {
     const { errors } = form;
     let result = [];
-    for (const fieldName of Object.keys(errors)) {
-        let error = getFormikFieldError(form, fieldName);
-        if (error) {
-            result.push(error);
-        }
-    }
+    appendObjectErrors(errors, undefined, form, result);
     return result;
 };
+
+function appendErrorsToTouched(result, errors) {
+    for (let key of Object.keys(errors)) {
+        const val = errors[key];
+        if (isObject(val)) {
+            result[key] = Array.isArray(val) ? [] : {};
+            appendErrorsToTouched(result[key], val);
+        }
+        else {
+            result[key] = true;
+        }
+    }
+}
+
+function touchedOrHasErrorState(touched, errors) {
+    let result = {};
+    for (let k of Object.keys(touched)) {
+        result[k] = touched[k];
+    }
+    appendErrorsToTouched(result, errors);
+    return result;
+}
 
 function isSemanticUiReactFormControl(component) {
     return (component === Form.Button)
@@ -121,13 +162,7 @@ export default class Wizard extends React.Component {
         const { values, touched, validateForm, setErrors, setTouched } = formikBag;
 
         validateForm(values).then(errors => {
-            let forcedTouched = {};
-            for (let k of Object.keys(touched)) {
-                forcedTouched[k] = touched[k];
-            }
-            for (let k of Object.keys(errors)) {
-                forcedTouched[k] = true;
-            }
+            let forcedTouched = touchedOrHasErrorState(touched, errors);
 
             setErrors(errors);
             setTouched(forcedTouched);

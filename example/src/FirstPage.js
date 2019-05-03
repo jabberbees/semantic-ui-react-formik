@@ -7,7 +7,7 @@ import { required } from './utils';
 const Page = (props) => (
   <React.Fragment>
     <Wizard.Field
-      name="firstName"
+      name="applicant.firstName"
       component={FormField}
       componentProps={{
         label: 'First Name',
@@ -19,7 +19,7 @@ const Page = (props) => (
     />
 
     <Wizard.Field
-      name="lastName"
+      name="applicant.lastName"
       component={FormField}
       componentProps={{
         label: 'Last Name',
@@ -30,7 +30,7 @@ const Page = (props) => (
     />
 
     <Wizard.Field
-      name="choice"
+      name="applicant.choice"
       component={FormField}
       componentProps={{
         label: 'Choice',
@@ -65,7 +65,7 @@ const Page = (props) => (
 
       <Form.Group inline style={{marginBottom: '0px'}}>
         <Wizard.Field
-          name="tshirtSize"
+          name="applicant.tshirtSize"
           component={Form.Radio}
           componentProps={{
             id: 'small',
@@ -82,7 +82,7 @@ const Page = (props) => (
         />
 
         <Wizard.Field
-          name="tshirtSize"
+          name="applicant.tshirtSize"
           component={Form.Radio}
           componentProps={{
             id: 'medium',
@@ -92,7 +92,7 @@ const Page = (props) => (
         />
 
         <Wizard.Field
-          name="tshirtSize"
+          name="applicant.tshirtSize"
           component={Form.Radio}
           componentProps={{
             id: 'large',
@@ -102,7 +102,7 @@ const Page = (props) => (
         />
 
         <Wizard.Field
-          name="tshirtSize"
+          name="applicant.tshirtSize"
           component={Form.Radio}
           componentProps={{
             id: 'giant',

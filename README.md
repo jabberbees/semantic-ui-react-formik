@@ -12,6 +12,8 @@ npm install --save semantic-ui-react-formik
 
 ## Usage
 
+### Basic usage
+
 ```jsx
 import React, { Component } from 'react'
 import { Wizard } from "semantic-ui-react-formik";
@@ -39,6 +41,46 @@ const MyForm = ({ onSubmit }) => (
 );
 
 export default MyForm;
+```
+
+### Customizing the form's button labels
+
+```jsx
+const MyForm = ({ onSubmit }) => (
+  <Wizard
+    buttonLabels={{
+      previous: "PREVIOUS",
+      next: "NEXT",
+      submit: "SUBMIT"
+    }}
+  >
+    ...
+  </Wizard>
+);
+```
+
+### Customizing the form's button labels on a specifig page
+
+```jsx
+const MyForm = ({ onSubmit }) => (
+  <Wizard>
+    <Wizard.Page
+      buttonLabels={{
+        next: "NEXT",
+      }}
+    >
+      <FirstPage />
+    </Wizard.Page>
+    <Wizard.Page
+      buttonLabels={{
+        previous: "PREVIOUS",
+        submit: "SUBMIT"
+      }}
+    >
+      <SecondPage />
+    </Wizard.Page>
+  </Wizard>
+);
 ```
 
 ## Example

@@ -59,6 +59,10 @@ const MyForm = ({ onPageChanged }) => (
           }
           return errors;
         }}
+        buttonLabels={{
+          previous: "GO BACK",
+          submit: "VALIDATE"
+        }}
       >
         <SecondPage />
       </Wizard.Page>

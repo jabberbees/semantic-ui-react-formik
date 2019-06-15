@@ -212,20 +212,31 @@ export default class Wizard extends React.Component {
         const { page, values } = this.state;
         const activePage = React.Children.toArray(children)[page];
         const isLastPage = page === React.Children.count(children) - 1;
+        var { showSubmit, showPrevious, } = activePage.props;
+        showSubmit = showSubmit === undefined || showSubmit;
+        showPrevious = showPrevious === undefined || showPrevious;
+        const activePageButtonLabels = activePage.props.buttonLabels;
         let submitLabel = 'Submit';
         let nextLabel = 'Next';
         let previousLabel = 'Previous';
-        if (buttonLabels !== undefined && buttonLabels.submit !== undefined) {
+        if (activePageButtonLabels && activePageButtonLabels.submit) {
+            submitLabel = activePageButtonLabels.submit;
+        }
+        else if (buttonLabels && buttonLabels.submit) {
             submitLabel = buttonLabels.submit;
         }
-        if (buttonLabels !== undefined && buttonLabels.next !== undefined) {
+        if (activePageButtonLabels && activePageButtonLabels.next) {
+            nextLabel = activePageButtonLabels.next;
+        }
+        else if (buttonLabels && buttonLabels.next) {
             nextLabel = buttonLabels.next;
         }
-        if (buttonLabels !== undefined && buttonLabels.previous !== undefined) {
+        if (activePageButtonLabels && activePageButtonLabels.previous) {
+            previousLabel = activePageButtonLabels.previous;
+        }
+        else if (buttonLabels && buttonLabels.previous) {
             previousLabel = buttonLabels.previous;
         }
-        const showSubmit = activePage.props.showSubmit === undefined || activePage.props.showSubmit;
-        const showPrevious = activePage.props.showPrevious === undefined || activePage.props.showPrevious;
         return (
             <Formik
                 initialValues={values}

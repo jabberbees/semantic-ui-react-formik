@@ -1,148 +1,24 @@
-import React from "react";
-import { Formik, Field, getIn } from "formik";
-import { Form, Radio, Button, Message } from 'semantic-ui-react';
-
-function isObject(obj) {
-    return obj !== null && typeof obj === 'object';
-}
-
-function getFormikFieldError(form, fieldName) {
-    const { serverValidation } = form.status || {};
-    const touched = getIn(form.touched, fieldName);
-    const error = getIn(form.errors, fieldName);
-    const checkTouched = serverValidation ? !touched : touched;
-    return checkTouched && error;
-};
-
-function setFormikFieldValue(form, name, value, shouldValidate) {
-    form.setFieldValue(name, value, shouldValidate);
-    form.setFieldTouched(name, true, shouldValidate);
-};
-
-function appendObjectErrors(object, parentField, form, result) {
-    for (const key of Object.keys(object)) {
-        const val = object[key];
-        
-        const fieldName = parentField
-        ? (Array.isArray(object) ? parentField + '[' + key + ']' : parentField + '.' + key)
-        : key;
-        
-        if (isObject(val)) {
-            appendObjectErrors(val, fieldName, form, result);
-        }
-        else {
-            const error = getFormikFieldError(form, fieldName);
-            if (error) {
-                result.push(error);
-            }
-        }
-    }
-}
-
-function getFormikErrors(form) {
-    const { errors } = form;
-    let result = [];
-    appendObjectErrors(errors, undefined, form, result);
-    return result;
-};
-
-function appendErrorsToTouched(result, errors) {
-    for (let key of Object.keys(errors)) {
-        const val = errors[key];
-        if (isObject(val)) {
-            result[key] = Array.isArray(val) ? [] : {};
-            appendErrorsToTouched(result[key], val);
-        }
-        else {
-            result[key] = true;
-        }
-    }
-}
-
-function touchedOrHasErrorState(touched, errors) {
-    let result = {};
-    for (let k of Object.keys(touched)) {
-        result[k] = touched[k];
-    }
-    appendErrorsToTouched(result, errors);
-    return result;
-}
-
-function isSemanticUiReactFormControl(component) {
-    return (component === Form.Button)
-        || (component === Form.Checkbox)
-        || (component === Form.Dropdown)
-        || (component === Form.Group)
-        || (component === Form.Input)
-        || (component === Form.Radio)
-        || (component === Form.Select)
-        || (component === Form.TextArea)
-        ;
-}
-
-function isSemanticUiReactFormRadio(component) {
-    return (component === Radio)
-        || (component === Form.Radio)
-        ;
-}
+import React from 'react';
+import { Formik } from 'formik';
+import { Form, Button, Message } from 'semantic-ui-react';
+import { getFormikErrors, touchedOrHasErrorState } from './helpers'
+import WizardPage from './WizardPage';
+import WizardField from './WizardField';
 
 export default class Wizard extends React.Component {
-    static Page = ({ children, parentState }) => {
-        return React.cloneElement(children, parentState);
-    };
+    static Page = WizardPage;
 
-    static Field = ({ component, componentProps = {}, ...fieldProps }) => (
-        <Field
-            {...fieldProps}
-            render={renderProps => {
-                var { id } = componentProps;
-                var { field, form } = renderProps;
-                var { name, value } = field;
-
-                if (!id) {
-                    id = "wizard_field_" + name;
-                }
-
-                const error = getFormikFieldError(form, name);
-                
-                let props = {
-                    ...componentProps,
-                    ...field,
-                    ...renderProps,
-                    id
-                };
-
-                if (isSemanticUiReactFormControl(component)) {
-                    props.error = !!error;
-                }
-                else {
-                    props.error = error;
-                }
-
-                if (isSemanticUiReactFormRadio(component)) {
-                    props.value = componentProps.value;
-                    props.checked = value === componentProps.value;
-                    props.onChange = field.onChange;
-                    props.onBlur = field.onBlur;
-                }
-                else {
-                    props.value = value || "";
-                    props.onChange = (e, { name, value }) => {
-                        setFormikFieldValue(form, name, value, true);
-                    }
-                    props.onBlur = form.handleBlur;
-                }
-
-                return React.createElement(component, props);
-            }}
-        />
-    );
+    static Field = WizardField;
 
     constructor(props) {
         super(props);
         this.state = {
             page: 0,
-            values: props.initialValues
+            values: props.initialValues,
+            sharedState: {
+                showSubmit: true,
+                showPrevious: true
+            }
         };
     }
 
@@ -196,6 +72,19 @@ export default class Wizard extends React.Component {
         return onSubmit(values, bag);
     };
 
+    setWizardState = (update, callback) => {
+        const { sharedState } = this.state;
+        this.setState(prevState => {
+            return {
+                ...prevState,
+                sharedState: {
+                    ...sharedState,
+                    update
+                }
+            };
+        }, callback);
+    }
+
     render() {
         const {
             buttonLabels,
@@ -209,12 +98,17 @@ export default class Wizard extends React.Component {
         if (validateOnBlur === undefined) {
             validateOnBlur = false;
         }
-        const { page, values } = this.state;
+        const { page, values, sharedState } = this.state;
         const activePage = React.Children.toArray(children)[page];
+        console.log("activePage", activePage);
+        console.log("activePage.props", activePage.props);
+        console.log("activePage.props.children", activePage.props.children);
         const isLastPage = page === React.Children.count(children) - 1;
         var { showSubmit, showPrevious, } = activePage.props;
-        showSubmit = showSubmit === undefined || showSubmit;
-        showPrevious = showPrevious === undefined || showPrevious;
+        showSubmit = (showSubmit === undefined && sharedState.showSubmit)
+            || showSubmit;
+        showPrevious = (showPrevious === undefined && sharedState.showPrevious)
+            || showPrevious;
         const activePageButtonLabels = activePage.props.buttonLabels;
         let submitLabel = 'Submit';
         let nextLabel = 'Next';
@@ -256,6 +150,7 @@ export default class Wizard extends React.Component {
                             {React.cloneElement(activePage, {
                                 parentState: {
                                     ...props,
+                                    setWizardState: this.setWizardState,
                                     previous: (e) => this.previous(e, props),
                                     next: (e) => this.next(e, props)
                                 }

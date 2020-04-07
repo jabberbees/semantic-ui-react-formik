@@ -16,8 +16,10 @@ export default class Wizard extends React.Component {
             page: 0,
             values: props.initialValues,
             sharedState: {
-                showSubmit: true,
-                showPrevious: true
+                showNext: true,
+                showPrevious: true,
+                disableNext: false,
+                disablePrevious: false
             }
         };
     }
@@ -79,7 +81,7 @@ export default class Wizard extends React.Component {
                 ...prevState,
                 sharedState: {
                     ...sharedState,
-                    update
+                    ...update
                 }
             };
         }, callback);
@@ -88,27 +90,29 @@ export default class Wizard extends React.Component {
     render() {
         const {
             buttonLabels,
-            errorsHeader, disableSubmitOnError,
+            errorsHeader, disableNextOnError,
             children, debug
         } = this.props;
+
         let { validateOnChange, validateOnBlur } = this.props;
-        if (validateOnChange === undefined) {
-            validateOnChange = true;
-        }
-        if (validateOnBlur === undefined) {
-            validateOnBlur = false;
-        }
+        validateOnChange = validateOnChange === undefined || validateOnChange;
+        validateOnChange = validateOnBlur === undefined || validateOnBlur;
+
         const { page, values, sharedState } = this.state;
-        const activePage = React.Children.toArray(children)[page];
-        console.log("activePage", activePage);
-        console.log("activePage.props", activePage.props);
-        console.log("activePage.props.children", activePage.props.children);
-        const isLastPage = page === React.Children.count(children) - 1;
-        var { showSubmit, showPrevious, } = activePage.props;
-        showSubmit = (showSubmit === undefined && sharedState.showSubmit)
-            || showSubmit;
+        const pages = React.Children.toArray(children);
+        const activePage = pages[page];
+        const isLastPage = page === pages.length - 1;
+
+        let { showNext, showPrevious, disableNext, disablePrevious } = activePage.props;
+        showNext = (showNext === undefined && sharedState.showNext)
+            || showNext;
         showPrevious = (showPrevious === undefined && sharedState.showPrevious)
             || showPrevious;
+        disableNext = (disableNext === undefined && sharedState.disableNext)
+            || disableNext;
+        disablePrevious = (disablePrevious === undefined && sharedState.disablePrevious)
+            || disablePrevious;
+
         const activePageButtonLabels = activePage.props.buttonLabels;
         let submitLabel = 'Submit';
         let nextLabel = 'Next';
@@ -131,6 +135,7 @@ export default class Wizard extends React.Component {
         else if (buttonLabels && buttonLabels.previous) {
             previousLabel = buttonLabels.previous;
         }
+
         return (
             <Formik
                 initialValues={values}
@@ -142,8 +147,8 @@ export default class Wizard extends React.Component {
                 render={props => {
                     const errors = getFormikErrors(props);
                     const hasErrors = errors.length > 0;
-                    const disableNext = hasErrors && disableSubmitOnError;
-                    const disableSubmit = disableNext || props.isSubmitting;
+                    const disableNextResult = (hasErrors && disableNextOnError) || disableNext;
+                    const disableSubmit = disableNextResult || props.isSubmitting;
                     return (
                         <Form onSubmit={props.handleSubmit}>
 
@@ -157,20 +162,20 @@ export default class Wizard extends React.Component {
                             })}
 
                             <Form.Group className='wizard-buttons' style={{ display: 'block', overflow: 'hidden'}}>
-                                {showSubmit && isLastPage && (
+                                {showNext && isLastPage && (
                                     <Button type='submit' floated='right' primary disabled={disableSubmit}>
                                         {submitLabel}
                                     </Button>
                                 )}
 
-                                {showSubmit && !isLastPage && (
-                                    <Button floated='right' onClick={(e) => this.next(e, props)} primary disabled={disableNext}>
+                                {showNext && !isLastPage && (
+                                    <Button floated='right' onClick={(e) => this.next(e, props)} primary disabled={disableNextResult}>
                                         {nextLabel}
                                     </Button>
                                 )}
 
                                 {showPrevious && page > 0 && (
-                                    <Button floated='right' onClick={(e) => this.previous(e, props)}>
+                                    <Button floated='right' onClick={(e) => this.previous(e, props)} disabled={disablePrevious}>
                                         {previousLabel}
                                     </Button>
                                 )}

@@ -18,7 +18,7 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.86.0",
     "semantic-ui-react-ext": "^1.0.3",
-    "semantic-ui-react-formik": "file:.."
+    "semantic-ui-react-formik": "file:../.."
   },
   "scripts": {
     "start": "react-scripts start",

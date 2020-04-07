@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Field } from 'formik';
+import PropTypes from 'prop-types';
 import {
     setFormikFieldValue,
     getFormikFieldError,
@@ -7,51 +8,85 @@ import {
     isSemanticUiReactFormRadio
 } from './helpers';
 
-const WizardField = ({ component, componentProps = {}, ...fieldProps }) => (
-    <Field
-        {...fieldProps}
-        render={renderProps => {
-            var { id } = componentProps;
-            var { field, form } = renderProps;
-            var { name, value } = field;
+class WizardField extends Component {
+    
+    render() {
+        const {
+            component,
+            componentProps,
+            onChange,
+            onBlur,
+            ...fieldProps
+        } = this.props;
 
-            if (!id) {
-                id = "wizard_field_" + name;
-            }
+        return (
+            <Field
+                {...fieldProps}
+                render={renderProps => {
+                    var { id } = componentProps;
+                    var { field, form } = renderProps;
+                    var { name, value } = field;
 
-            const error = getFormikFieldError(form, name);
-            
-            let props = {
-                ...componentProps,
-                ...field,
-                ...renderProps,
-                id
-            };
+                    if (!id) {
+                        id = "wizard_field_" + name;
+                    }
 
-            if (isSemanticUiReactFormControl(component)) {
-                props.error = !!error;
-            }
-            else {
-                props.error = error;
-            }
+                    const error = getFormikFieldError(form, name);
 
-            if (isSemanticUiReactFormRadio(component)) {
-                props.value = componentProps.value;
-                props.checked = value === componentProps.value;
-                props.onChange = field.onChange;
-                props.onBlur = field.onBlur;
-            }
-            else {
-                props.value = value || "";
-                props.onChange = (e, { name, value }) => {
-                    setFormikFieldValue(form, name, value, true);
-                }
-                props.onBlur = form.handleBlur;
-            }
+                    let props = {
+                        ...componentProps,
+                        ...field,
+                        ...renderProps,
+                        id
+                    };
 
-            return React.createElement(component, props);
-        }}
-    />
-);
+                    if (isSemanticUiReactFormControl(component)) {
+                        props.error = !!error;
+                    }
+                    else {
+                        props.error = error;
+                    }
+
+                    if (isSemanticUiReactFormRadio(component)) {
+                        props.value = componentProps.value;
+                        props.checked = value === componentProps.value;
+                        props.onChange = field.onChange;
+                        props.onBlur = field.onBlur;
+                    }
+                    else {
+                        props.value = value || "";
+                        props.onChange = (e, { name, value }) => {
+                            setFormikFieldValue(form, name, value, true);
+                            if (onChange) {
+                                onChange(name, value);
+                            }
+                            // console.log("onChange", name, value, form.values);
+                        }
+                        props.onBlur = (e) => {
+                            form.handleBlur(e);
+                            if (onBlur) {
+                                onBlur(name, value);
+                            }
+                            // console.log("onBlur", name, value, form.values);
+                        }
+                    }
+
+                    return React.createElement(component, props);
+                }}
+            />
+        );
+    }
+}
+
+WizardField.propTypes = {
+    component: PropTypes.elementType,
+    componentProps: PropTypes.object,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func
+};
+
+WizardField.defaultProps = {
+    componentProps: {}
+};
 
 export default WizardField;

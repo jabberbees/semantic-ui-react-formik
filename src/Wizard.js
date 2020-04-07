@@ -1,14 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Formik } from 'formik';
 import { Form, Button, Message } from 'semantic-ui-react';
 import { getFormikErrors, touchedOrHasErrorState } from './helpers'
 import WizardPage from './WizardPage';
 import WizardField from './WizardField';
 
-export default class Wizard extends React.Component {
-    static Page = WizardPage;
-
-    static Field = WizardField;
+class Wizard extends Component {
 
     constructor(props) {
         super(props);
@@ -199,3 +197,21 @@ export default class Wizard extends React.Component {
         );
     }
 }
+
+Wizard.Page = WizardPage;
+
+Wizard.Field = WizardField;
+
+Wizard.propTypes = {
+    buttonLabels: PropTypes.object,
+    errorsHeader: PropTypes.string,
+    disableNextOnError: PropTypes.bool,
+    debug: PropTypes.bool
+};
+
+Wizard.defaultProps = {
+    disableNextOnError: true,
+    debug: false
+};
+
+export default Wizard;

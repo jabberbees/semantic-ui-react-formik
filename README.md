@@ -85,7 +85,21 @@ const MyForm = ({ onSubmit }) => (
 
 ## Example
 
-Screenshot from included example:
+### To run examples
+
+```bash
+cd path/to/semantic-ui-react-formik
+npm start
+```
+
+Open a second shell and execute:
+
+```bash
+cd path/to/semantic-ui-react-formik/examples/example1
+npm start
+```
+
+### Screenshots from included example1:
 
   * Wizard page 1
   

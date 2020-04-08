@@ -9,7 +9,7 @@ import {
 } from './helpers';
 
 class WizardField extends Component {
-    
+
     render() {
         const {
             component,
@@ -20,9 +20,8 @@ class WizardField extends Component {
         } = this.props;
 
         return (
-            <Field
-                {...fieldProps}
-                render={renderProps => {
+            <Field {...fieldProps}>
+                {(renderProps) => {
                     var { id } = componentProps;
                     var { field, form } = renderProps;
                     var { name, value } = field;
@@ -73,7 +72,7 @@ class WizardField extends Component {
 
                     return React.createElement(component, props);
                 }}
-            />
+            </Field>
         );
     }
 }

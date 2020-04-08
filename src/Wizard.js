@@ -142,7 +142,8 @@ class Wizard extends Component {
                 validateOnBlur={validateOnBlur}
                 validate={this.validate}
                 onSubmit={this.handleSubmit}
-                render={props => {
+            >
+                {(props) => {
                     const errors = getFormikErrors(props);
                     const hasErrors = errors.length > 0;
                     const disableNextResult = (hasErrors && disableNextOnError) || disableNext;
@@ -193,7 +194,7 @@ class Wizard extends Component {
                         </Form>
                     );
                 }}
-            />
+            </Formik>
         );
     }
 }

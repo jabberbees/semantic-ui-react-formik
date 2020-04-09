@@ -28,19 +28,7 @@ const MyWizard = ({ onPageChanged }) => (
       }}
       debug={false}
     >
-      <Wizard.Page
-        showPrevious={false}
-        validate={values => {
-          const errors = {};
-          if (values.applicant && values.applicant.firstName === values.applicant.lastName) {
-            errors.applicant = {
-              firstName: 'Must be different than last name',
-              lastName: 'Must be different than first name'
-            };
-          }
-          return errors;
-        }}
-      >
+      <Wizard.Page showPrevious={false}>
         <FirstPage />
       </Wizard.Page>
       <Wizard.Page

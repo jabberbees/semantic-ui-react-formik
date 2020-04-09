@@ -15,7 +15,7 @@ export function getFormikFieldError(form, fieldName) {
 
 export function setFormikFieldValue(form, name, value, shouldValidate) {
     form.setFieldValue(name, value, shouldValidate);
-    form.setFieldTouched(name, true, shouldValidate);
+    form.setFieldTouched(name, true, false);
 };
 
 function appendObjectErrors(object, parentField, form, result) {

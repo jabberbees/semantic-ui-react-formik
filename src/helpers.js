@@ -1,4 +1,4 @@
-import { Form, Radio } from 'semantic-ui-react';
+import { Form, Radio, Checkbox } from 'semantic-ui-react';
 import { getIn } from 'formik';
 
 function isObject(obj) {
@@ -76,6 +76,12 @@ export function isSemanticUiReactFormControl(component) {
         || (component === Form.Radio)
         || (component === Form.Select)
         || (component === Form.TextArea)
+        ;
+}
+
+export function isSemanticUiReactFormCheckbox(component) {
+    return (component === Checkbox)
+        || (component === Form.Checkbox)
         ;
 }
 

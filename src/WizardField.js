@@ -5,7 +5,7 @@ import {
     setFormikFieldValue,
     getFormikFieldError,
     isSemanticUiReactFormControl,
-    isSemanticUiReactFormRadio
+    isSemanticUiReactFormRadio, isSemanticUiReactFormCheckbox
 } from './helpers';
 
 class WizardField extends Component {
@@ -46,7 +46,18 @@ class WizardField extends Component {
                         props.error = error;
                     }
 
-                    if (isSemanticUiReactFormRadio(component)) {
+                    if (isSemanticUiReactFormCheckbox(component)) {
+                        props.checked = value;
+                        delete props.value;
+                        props.onChange = (e, { name, checked, indeterminate }) => {
+                            const checkedValue = indeterminate ? undefined : checked;
+                            setFormikFieldValue(form, name, checkedValue, true);
+                            if (onChange) {
+                                onChange(name, checkedValue);
+                            }
+                        }
+                    }
+                    else if (isSemanticUiReactFormRadio(component)) {
                         props.value = componentProps.value;
                         props.checked = value === componentProps.value;
                         props.onChange = field.onChange;

@@ -63,7 +63,7 @@ const Page = (props) => (
     <div className='field required fields inline'>
       <label>T-shirt Size</label>
 
-      <Form.Group inline style={{marginBottom: '0px'}}>
+      <Form.Group inline style={{ marginBottom: '0px' }}>
         <Wizard.Field
           name="applicant.tshirtSize"
           component={Form.Radio}
@@ -112,6 +112,18 @@ const Page = (props) => (
         />
       </Form.Group>
     </div>
+
+    <Form.Group>
+      <Wizard.Field
+        name="applicant.agreement"
+        component={Form.Checkbox}
+        componentProps={{
+          id: 'agreement',
+          label: 'I am completely mad and I agree to everything',
+          toggle: true
+        }}
+      />
+    </Form.Group>
 
     <Button icon labelPosition='left' onClick={props.previous}>
       <Icon name='undo' />

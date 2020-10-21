@@ -56,6 +56,7 @@ class WizardField extends Component {
                                 onChange(name, checkedValue);
                             }
                         }
+                        props.onBlur = field.onBlur;
                     }
                     else if (isSemanticUiReactFormRadio(component)) {
                         props.value = componentProps.value;

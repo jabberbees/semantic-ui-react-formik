@@ -33,7 +33,9 @@ class Wizard extends Component {
     }
 
     next = (e, formikBag) => {
-        e.preventDefault();
+        if (e && e.preventDefault) {
+            e.preventDefault();
+        }
 
         const { values, touched, validateForm, setErrors, setTouched } = formikBag;
 
@@ -53,7 +55,10 @@ class Wizard extends Component {
     }
 
     previous = (e, { setErrors }) => {
-        e.preventDefault();
+        if (e && e.preventDefault) {
+            e.preventDefault();
+        }
+
         this.setState(state => ({
             page: Math.max(state.page - 1, 0)
         }), () => {
